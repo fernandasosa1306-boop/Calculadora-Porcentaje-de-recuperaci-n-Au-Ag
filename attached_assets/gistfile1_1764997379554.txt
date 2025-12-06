@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Simulador Metalurgico V7.1 WEB (Conectado)</title>
+    <title>Simulador Metalúrgico V7.1 WEB (Conectado)</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         :root {
@@ -44,6 +44,7 @@
         h1 { margin: 0; color: var(--primary); }
         p.subtitle { color: #7f8c8d; margin-top: 5px; }
 
+        /* Selector de Metal */
         .metal-switch {
             display: flex;
             justify-content: center;
@@ -76,6 +77,7 @@
             box-shadow: 0 0 15px rgba(189, 195, 199, 0.4);
         }
 
+        /* Grid de Inputs */
         .controls-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
@@ -115,6 +117,7 @@
             font-weight: bold;
         }
 
+        /* Panel de Resultados */
         .results-panel {
             background: var(--primary);
             color: white;
@@ -131,6 +134,7 @@
         .res-value { font-size: 2.5rem; font-weight: bold; }
         .res-label { font-size: 0.9rem; opacity: 0.8; }
 
+        /* Semáforo Visual */
         .traffic-light {
             display: flex;
             gap: 10px;
@@ -147,11 +151,13 @@
             transition: 0.3s;
         }
 
+        /* Gráfico */
         .chart-container {
             height: 350px;
             width: 100%;
         }
 
+        /* Botón Calcular */
         .btn-calc {
             display: block;
             width: 100%;
@@ -167,6 +173,7 @@
         }
         .btn-calc:hover { background: #2980b9; }
 
+        /* Alertas */
         .alert-box {
             display: none;
             background-color: #ffeaa7;
@@ -184,33 +191,33 @@
 
 <div class="container">
     <header>
-        <h1>Simulador Metalurgico V7.1 WEB</h1>
+        <h1>🔬 Simulador Metalúrgico V7.1 WEB</h1>
         <p class="subtitle">Modelo predictivo (Python Backend)</p>
     </header>
 
     <div class="metal-switch">
         <input type="radio" name="metal" id="metal-au" class="radio-input" value="au" checked onchange="updateUI()">
-        <label for="metal-au" class="radio-label">ORO (Au)</label>
+        <label for="metal-au" class="radio-label">💰 ORO (Au)</label>
 
         <input type="radio" name="metal" id="metal-ag" class="radio-input" value="ag" onchange="updateUI()">
-        <label for="metal-ag" class="radio-label">PLATA (Ag)</label>
+        <label for="metal-ag" class="radio-label">⚪ PLATA (Ag)</label>
     </div>
 
     <div class="controls-grid">
         <div class="control-card">
             <h3>1. pH de Pulpa</h3>
-            <span class="limit-info">Rango Optimo: 4.0 - 9.0</span>
+            <span class="limit-info">Rango Óptimo: 4.0 - 9.0</span>
             <input type="range" id="x1_range" min="0" max="14" step="0.1" value="8" oninput="sync('x1', this.value)">
             <div class="input-row">
                 <span>Valor:</span>
                 <input type="number" id="x1" value="8" min="0" max="14" step="0.1" oninput="sync('x1_range', this.value)">
             </div>
-            <div id="alert-x1" class="alert-box">pH fuera de rango operativo (4-9).</div>
+            <div id="alert-x1" class="alert-box">⚠️ pH fuera de rango operativo (4-9).</div>
         </div>
 
         <div class="control-card">
             <h3>2. % Sulfuros</h3>
-            <span class="limit-info">Mineralizacion (0 - 100%)</span>
+            <span class="limit-info">Mineralización (0 - 100%)</span>
             <input type="range" id="x2_range" min="0" max="100" step="1" value="10" oninput="sync('x2', this.value)">
             <div class="input-row">
                 <span>Valor (%):</span>
@@ -226,7 +233,7 @@
                 <span>Valor (g/t):</span>
                 <input type="number" id="x3" value="5" min="0" max="1000" step="0.1" oninput="sync('x3_range', this.value)">
             </div>
-            <div id="alert-x3" class="alert-box">Ley extremadamente alta.</div>
+            <div id="alert-x3" class="alert-box">⚠️ Ley extremadamente alta.</div>
         </div>
 
         <div class="control-card">
@@ -247,19 +254,19 @@
                 <span>Valor (min):</span>
                 <input type="number" id="x5" value="12" min="0.1" max="500" step="1" oninput="sync('x5_range', this.value)">
             </div>
-            <div id="alert-x5" class="alert-box">Tiempo > 25 min puede sobremoler.</div>
+            <div id="alert-x5" class="alert-box">⚠️ Tiempo > 25 min puede sobremoler.</div>
         </div>
     </div>
 
-    <button class="btn-calc" onclick="calcular()">CALCULAR RECUPERACION (BACKEND)</button>
+    <button class="btn-calc" onclick="calcular()">CALCULAR RECUPERACIÓN (BACKEND)</button>
 
     <div class="results-panel">
         <div class="res-item">
-            <div class="res-label">Recuperacion Estimada</div>
+            <div class="res-label">Recuperación Estimada</div>
             <div class="res-value" id="res-percent">-- %</div>
         </div>
         <div class="res-item">
-            <div class="res-label">Clasificacion</div>
+            <div class="res-label">Clasificación</div>
             <div id="res-class" style="font-weight: bold; font-size: 1.2rem; margin-top:5px;">--</div>
         </div>
         <div class="traffic-light">
@@ -276,6 +283,7 @@
 </div>
 
 <script>
+    // Configuración Inicial
     let chartInstance = null;
 
     function sync(id, value) {
@@ -309,6 +317,7 @@
     }
 
     async function calcular() {
+        // 1. Obtener datos de la UI
         const metal = document.querySelector('input[name="metal"]:checked').value;
         const x1 = document.getElementById('x1').value;
         const x2 = document.getElementById('x2').value;
@@ -316,13 +325,15 @@
         const x4 = document.getElementById('x4').value;
         const x5 = document.getElementById('x5').value;
 
+        // Validaciones de UI (visuales)
         const alertX3 = document.getElementById('alert-x3');
         if (metal === 'au' && x3 > 20) alertX3.style.display = 'block';
         else if (metal === 'ag' && x3 > 200) alertX3.style.display = 'block';
         else alertX3.style.display = 'none';
 
         try {
-            const respuesta = await fetch('/api/calcular', {
+            // 2. CONEXIÓN CON PYTHON
+            const respuesta = await fetch('http://127.0.0.1:5000/api/calcular', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -339,10 +350,13 @@
 
             if (!respuesta.ok) throw new Error("Error en servidor");
 
+            // 3. Recibir datos procesados
             const datos = await respuesta.json();
 
+            // 4. Actualizar Interfaz
             document.getElementById('res-percent').innerText = datos.recuperacion.toFixed(2) + " %";
             
+            // Actualizar Clasificación y Luces
             const txtClass = document.getElementById('res-class');
             txtClass.innerText = datos.clasificacion.texto;
             txtClass.style.color = datos.clasificacion.color;
@@ -353,7 +367,7 @@
         } catch (error) {
             console.error("Error conectando:", error);
             document.getElementById('res-percent').innerText = "Error";
-            document.getElementById('res-class').innerText = "Conexion fallida";
+            alert("No se pudo conectar con el backend (Python). Asegúrate de correr 'python app.py'");
         }
     }
 
@@ -362,6 +376,7 @@
         const lYel = document.getElementById('light-yellow');
         const lGrn = document.getElementById('light-green');
 
+        // Reset
         lRed.style.background = "#555"; lRed.style.boxShadow = "none";
         lYel.style.background = "#555"; lYel.style.boxShadow = "none";
         lGrn.style.background = "#555"; lGrn.style.boxShadow = "none";
@@ -394,7 +409,7 @@
             data: {
                 labels: labels,
                 datasets: [{
-                    label: 'Contribucion a la Recuperacion (%)',
+                    label: 'Contribución a la Recuperación (%)',
                     data: data,
                     backgroundColor: colors,
                     borderColor: borders,
@@ -421,6 +436,7 @@
         });
     }
 
+    // Inicializar
     window.onload = function() {
         calcular();
     }
